@@ -7,6 +7,7 @@ import string
 from random import SystemRandom
 from typing import Any, Callable
 
+from mailgen.common.app_typing import OptionsType
 from mailgen.common.exceptions import ClipboardRetrieveDataError
 
 cryptogen = SystemRandom()
@@ -93,7 +94,7 @@ def search_six_digits(text: str) -> str:
     return '111111'
 
 
-def randomize(option: str, length: int) -> str:
+def randomize(option: OptionsType, length: int) -> str:
     """
     Return random letters in dependence of given options.
 
