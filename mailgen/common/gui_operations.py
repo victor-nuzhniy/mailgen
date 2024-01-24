@@ -44,7 +44,7 @@ class EmailVerifier(object):
 
         pyautogui.hotkey('ctrl', 't')
 
-        time.sleep(10)
+        time.sleep(3)
         pyautogui.typewrite('{url}\n'.format(url=DROPMAIL_URL))
 
         self.check_email()
@@ -62,8 +62,7 @@ class EmailVerifier(object):
 
         pyautogui.hotkey('ctrl', '\t')
         time.sleep(5)
-
-        pyautogui.typewrite('\t')
+        pyautogui.typewrite('\t\t\t\t\t\t')
         pyautogui.hotkey('ctrl', 'a')
         time.sleep(1)
         pyautogui.hotkey('ctrl', 'c')
@@ -115,11 +114,11 @@ class GeneratorOperations(object):
     def input_username_password_into_form(self, username: str, password: str) -> None:
         """Input username and password into form."""
         pyautogui.typewrite('{name}\t\t\t'.format(name=username))
-        time.sleep(0.2)
+        time.sleep(0.6)
         pyautogui.typewrite(
             '{first}\t{second}\t'.format(first=password, second=password),
         )
-        time.sleep(0.2)
+        time.sleep(0.6)
         pyautogui.typewrite('\n')
         time.sleep(5)
 
