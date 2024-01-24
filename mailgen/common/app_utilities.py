@@ -4,9 +4,10 @@ import string
 from random import SystemRandom
 from typing import Any, Callable
 
-from mailgen.common.app_typing import OptionsType
+from mailgen.common.app_typing import BrowserLetterType, OptionsType
 from mailgen.common.constants import LOGFILE
 from mailgen.common.exceptions import ServiceUnavailableError
+from mailgen.common.os_services import OsInfo
 
 cryptogen = SystemRandom()
 logger: logging.Logger = logging.getLogger()
@@ -78,3 +79,11 @@ def log_errors(func: Callable) -> Callable:
             logger.info(str(ex))
 
     return wrap
+
+
+def get_incognito_open_tab_letter() -> BrowserLetterType:
+    """Get specific browser hot key letter to open incognito tab."""
+    os_info = OsInfo()
+    if os_info.default_browser == 'firefox':
+        return 'p'
+    return 'n'
