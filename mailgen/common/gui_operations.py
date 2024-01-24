@@ -7,7 +7,7 @@ from typing import Optional
 import pyautogui
 
 from mailgen.common.app_services import WindllService, app_searchers
-from mailgen.common.app_utilities import abort, randomize
+from mailgen.common.app_utilities import abort, get_incognito_open_tab_letter, randomize
 from mailgen.common.constants import DROPMAIL_URL, GOOGLE_URL, PROTON_URL
 
 windll_service = WindllService()
@@ -111,8 +111,8 @@ class GeneratorOperations(object):
         webbrowser.open(GOOGLE_URL)
 
         time.sleep(5)
-
-        pyautogui.hotkey('ctrlleft', 'shift', 'n')  # add logic default browser
+        letter = get_incognito_open_tab_letter()
+        pyautogui.hotkey('ctrlleft', 'shift', letter)  # add logic default browser
         pyautogui.typewrite('{url}\n'.format(url=PROTON_URL))
         time.sleep(5)
 
