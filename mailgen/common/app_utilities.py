@@ -1,4 +1,5 @@
 """Utilites for mailgen app."""
+import logging
 import string
 from random import SystemRandom
 
@@ -6,6 +7,8 @@ from mailgen.common.app_typing import OptionsType
 from mailgen.common.constants import LOGFILE
 
 cryptogen = SystemRandom()
+logger: logging.Logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO)
 
 
 def randomize(option: OptionsType, length: int) -> str:
@@ -48,6 +51,7 @@ def randomize(option: OptionsType, length: int) -> str:
 
 def add_info_to_logfile(username: str, password: str) -> None:
     """Write usename and password to logfile."""
+    logger.info('{name}@proton.me:{word}'.format(name=username, word=password))
     with open(LOGFILE, 'a') as log_file:
         log_file.write(
             '{username}@proton.me:{password}\n'.format(
