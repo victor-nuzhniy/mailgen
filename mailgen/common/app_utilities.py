@@ -2,9 +2,11 @@
 import logging
 import string
 from random import SystemRandom
+from typing import Any, Callable
 
 from mailgen.common.app_typing import OptionsType
 from mailgen.common.constants import LOGFILE
+from mailgen.common.exceptions import ServiceUnavailableError
 
 cryptogen = SystemRandom()
 logger: logging.Logger = logging.getLogger()
@@ -59,3 +61,20 @@ def add_info_to_logfile(username: str, password: str) -> None:
                 password=password,
             ),
         )
+
+
+def abort(text: str) -> None:
+    """Raise ServiceUnavailableError."""
+    raise ServiceUnavailableError(text)
+
+
+def log_errors(func: Callable) -> Callable:
+    """Wrap func with catching errors functionality."""
+
+    def wrap(*args: Any, **kwargs: Any) -> Any:  # noqa: WPS430
+        try:
+            return func(*args, **kwargs)
+        except ServiceUnavailableError as ex:
+            logger.info(str(ex))
+
+    return wrap
