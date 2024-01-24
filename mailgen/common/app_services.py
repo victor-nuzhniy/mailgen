@@ -5,6 +5,7 @@ import ctypes
 import re
 from typing import Any, Callable
 
+from mailgen.common.constants import VERIFIED_EMAIL_DOMAINS
 from mailgen.common.exceptions import ClipboardRetrieveDataError
 
 
@@ -60,18 +61,32 @@ class WindllService(object):
         return ''
 
 
+def check_email_is_verified(email: str) -> str:
+    """
+    Check whether email with domain in verified emails domains list.
+
+    :param email: str Email for verification.
+
+    :return: str Email or empty string in case not belonging.
+    """
+    for domain in VERIFIED_EMAIL_DOMAINS:
+        if email.endswith(domain):
+            return email
+    return ''
+
+
 def search_email(text: str) -> str:
     """
     Search first email in text.
 
     :param text: str Text to search regex in.
 
-    :return: str Found email or empty stging.
+    :return: str Found email or empty string.
     """
-    if '@dropmail.me' in text or '@10mail.org' in text or '@emltmp.com' in text:
-        match = re.search(r'[\w.+-]+@[\w-]+\.[\w.-]+', text)
-        if match:
-            return str(match.group(0))
+    match = re.search(r'[\w.+-]+@[\w-]+\.[\w.-]+', text)
+    if match:
+        email: str = str(match.group(0))
+        return check_email_is_verified(email)
     return ''
 
 
