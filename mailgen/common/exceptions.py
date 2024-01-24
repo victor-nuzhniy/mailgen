@@ -7,3 +7,7 @@ class MailGenError(Exception):
 
 class ClipboardRetrieveDataError(MailGenError):
     """Error retrieving data from clipboard."""
+
+
+class ServiceUnavailableError(MailGenError):
+    """Error in case unavailability some operations."""
