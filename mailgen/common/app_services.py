@@ -97,12 +97,12 @@ class Searchers(object):
 
         :param text: str Text to search regex in.
 
-        :return: str Found six-digits string or '111111'.
+        :return: str Found six-digits string or empty string.
         """
         match = re.search(r'(\d{6})', text)
         if match:
             return str(match.group(0))
-        return '111111'  # TODO decide what to do
+        return ''
 
     def search_captcha_word(self, text: str) -> str:
         """
@@ -127,6 +127,18 @@ class Searchers(object):
         match = re.search('Email', text)
         if match:
             return 'Email'
+        return ''
+
+    def search_email_verification_phrase(self, text: str) -> str:
+        """
+        Search 'Get verification code' phrase.
+
+        :param text: str Text from the clipboard.
+        :return: str 'Found' word or empty string.
+        """
+        match = re.search('Get verification code', text)
+        if match:
+            return 'Found'
         return ''
 
 
