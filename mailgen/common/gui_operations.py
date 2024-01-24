@@ -41,7 +41,7 @@ class EmailVerifier(object):
 
     def find_email_and_use_for_verification(self) -> None:  # noqa: WPS213
         """Find email with given service and use for verification."""
-        pyautogui.typewrite('\t\t\t\n')
+        pyautogui.typewrite('\t\t\t\t\t')
         pyautogui.hotkey('ctrl', 't')
         time.sleep(3)
         pyautogui.typewrite('{url}\n'.format(url=DROPMAIL_URL))
@@ -51,6 +51,7 @@ class EmailVerifier(object):
         pyautogui.hotkey('ctrl', '\t')
         time.sleep(1)
         pyautogui.hotkey('ctrl', 'v')
+        time.sleep(0.4)
         pyautogui.typewrite('\n')
 
     def is_email_correct(self) -> None:
@@ -70,7 +71,8 @@ class EmailVerifier(object):
         time.sleep(25)
         pyautogui.hotkey('ctrl', '\t')
         time.sleep(5)
-        pyautogui.typewrite('\t\t\t\t\t\t')
+        pyautogui.click(0, 300)
+        time.sleep(0.3)
         pyautogui.hotkey('ctrl', 'a')
         time.sleep(1)
         pyautogui.hotkey('ctrl', 'c')
@@ -87,7 +89,7 @@ class EmailVerifier(object):
         if not six_digits:
             abort("Digits haven't received to verification email. Try again.")
         pyautogui.typewrite('{digits}\n'.format(digits=six_digits))
-        time.sleep(5)
+        time.sleep(3)
         pyautogui.typewrite('\n')
 
     def verify_email(self) -> None:
@@ -135,13 +137,15 @@ class GeneratorOperations(object):
 
     def finish_registration(self) -> None:
         """Finish registration, refusing to use phone number as verification."""
-        time.sleep(5)
+        time.sleep(15)
         pyautogui.typewrite('\t\t\t\n')
         time.sleep(1)
         pyautogui.typewrite('\t\n')
 
     def is_captcha_verification(self) -> bool:
         """Check, whether captcha verification available."""
+        pyautogui.click(0, 300)
+        time.sleep(0.4)
         pyautogui.hotkey('ctrl', 'a')
         time.sleep(0.3)
         pyautogui.hotkey('ctrl', 'c')
@@ -167,7 +171,7 @@ generator_operations = GeneratorOperations()
 class CaptchaVerifier(object):
     """Class with gui captcha verification functionality."""
 
-    def move_sample_to_place(self) -> None:
+    def move_sample_to_place(self) -> None:  # noqa: WPS213
         """Move captcha sample to place."""
         coordinates: Optional[tuple] = self.get_sample_and_place_location()
         if not coordinates:
@@ -183,8 +187,10 @@ class CaptchaVerifier(object):
         pyautogui.moveTo(xx, yy)
         time.sleep(2)
         pyautogui.dragTo(xxx + 2, yyy - 3, 2, button='left')
-        time.sleep(1)
-        pyautogui.typewrite('\n')
+        time.sleep(2)
+        pyautogui.leftClick(0, 300)
+        time.sleep(0.3)
+        pyautogui.press('enter')  # TODO check , add tabs
         time.sleep(20)
         if generator_operations.is_captcha_verification():
             abort('CAPTCHA verification failed. Please, try again.')
