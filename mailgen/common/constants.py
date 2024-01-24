@@ -9,3 +9,9 @@ COPY_IMAGE: str = 'mailgen/images/copy_icon.png'
 CAPTCHA_PLACE_IMAGE: str = 'mailgen/images/captcha_place.png'
 CAPTCHA_SAMPLE_IMAGE: str = 'mailgen/images/captcha_sample.png'
 LOGFILE: str = 'accLog.txt'
+VERIFIED_EMAIL_DOMAINS: tuple = (
+    '@dropmail.me',
+    '@emltmp.com',
+    '@spymail.one',
+    '@10mail.org',
+)
