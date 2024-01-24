@@ -2,10 +2,11 @@
 import logging
 import time
 import webbrowser
+from typing import Optional
 
 import pyautogui
 
-from mailgen.common.app_services import WindllService, search_email, search_six_digits
+from mailgen.common.app_services import WindllService, app_searchers
 from mailgen.common.app_utilities import randomize
 from mailgen.common.constants import DROPMAIL_URL, GOOGLE_URL, PROTON_URL
 
@@ -33,7 +34,7 @@ class EmailVerifier(object):
                 xx, yy = box_object
                 pyautogui.click(xx, yy)
                 time.sleep(1)
-                new_mail = windll_service.get_clipboard_data(search_email)
+                new_mail = windll_service.get_clipboard_data(app_searchers.search_email)
                 if new_mail:
                     logger.info('10 min mail: {email}'.format(email=new_mail))
                     break
@@ -73,7 +74,9 @@ class EmailVerifier(object):
         pyautogui.hotkey('shift', '\t')
         pyautogui.hotkey('ctrl', '\t')
         time.sleep(5)
-        six_digits: str = windll_service.get_clipboard_data(search_six_digits)
+        six_digits: str = windll_service.get_clipboard_data(
+            app_searchers.search_six_digits,
+        )
 
         pyautogui.typewrite('{digits}\n'.format(digits=six_digits))
 
@@ -129,5 +132,61 @@ class GeneratorOperations(object):
         time.sleep(1)
         pyautogui.typewrite('\t\n')
 
+    def is_captcha_verification(self) -> bool:
+        """Check, whether captcha verification available."""
+        pyautogui.hotkey('ctrl', 'a')
+        time.sleep(0.3)
+        pyautogui.hotkey('ctrl', 'c')
+        time.sleep(1)
+        pyautogui.click(x=0, y=300)
+        return bool(
+            windll_service.get_clipboard_data(app_searchers.search_captcha_word),
+        )
+
+    def is_email_verification(self) -> bool:
+        """Check, whether email verification available."""
+        pyautogui.hotkey('ctrl', 'a')
+        time.sleep(0.3)
+        pyautogui.hotkey('ctrl', 'c')
+        time.sleep(1)
+        pyautogui.click(x=0, y=300)
+        return bool(windll_service.get_clipboard_data(app_searchers.search_email_word))
+
 
 generator_operations = GeneratorOperations()
+
+
+class CaptchaVerifier(object):
+    """Class with gui captcha verification functionality."""
+
+    def move_sample_to_place(self) -> bool:
+        """Move captcha sample to place."""
+        coordinates: Optional[tuple] = self.get_sample_and_place_location()
+        if coordinates:
+            xx, yy, xxx, yyy = coordinates
+            pyautogui.moveTo(xx, yy)
+            time.sleep(2)
+            pyautogui.dragTo(xxx + 2, yyy - 3, 2, button='left')
+            return True
+        return False
+
+    def get_sample_and_place_location(self) -> Optional[tuple[int, int, int, int]]:
+        """Get captcha sample and place location."""
+        sample = pyautogui.locateCenterOnScreen(
+            'mailgen/images/captcha_sample.png',
+            confidence=0.5,
+            grayscale=True,
+        )
+        time.sleep(3)
+        place = pyautogui.locateCenterOnScreen(
+            'mailgen/images/captcha_place.png',
+            confidence=0.7,
+            grayscale=True,
+        )
+        time.sleep(3)
+        if sample and place:
+            return sample + place
+        return None
+
+
+captcha_verifier = CaptchaVerifier()
