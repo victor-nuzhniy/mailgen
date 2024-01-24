@@ -129,7 +129,7 @@ class Searchers(object):
             return 'Email'
         return ''
 
-    def search_email_verification_phrase(self, text: str) -> str:
+    def search_email_verif_phrase(self, text: str) -> str:
         """
         Search 'Get verification code' phrase.
 
