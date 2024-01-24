@@ -71,6 +71,3 @@ class OsInfo(object):
     def os_platform(self) -> str:
         """Get current os name."""
         return self._os_platform
-
-
-os_info = OsInfo()
