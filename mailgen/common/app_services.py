@@ -61,44 +61,77 @@ class WindllService(object):
         return ''
 
 
-def check_email_is_verified(email: str) -> str:
-    """
-    Check whether email with domain in verified emails domains list.
+class Searchers(object):
+    """Searchers for different cases."""
 
-    :param email: str Email for verification.
+    def check_email_is_verified(self, email: str) -> str:
+        """
+        Check whether email with domain in verified emails domains list.
 
-    :return: str Email or empty string in case not belonging.
-    """
-    for domain in VERIFIED_EMAIL_DOMAINS:
-        if email.endswith(domain):
-            return email
-    return ''
+        :param email: str Email for verification.
+
+        :return: str Email or empty string in case not belonging.
+        """
+        for domain in VERIFIED_EMAIL_DOMAINS:
+            if email.endswith(domain):
+                return email
+        return ''
+
+    def search_email(self, text: str) -> str:
+        """
+        Search first email in text.
+
+        :param text: str Text to search regex in.
+
+        :return: str Found email or empty string.
+        """
+        match = re.search(r'[\w.+-]+@[\w-]+\.[\w.-]+', text)
+        if match:
+            email: str = str(match.group(0))
+            return self.check_email_is_verified(email)
+        return ''
+
+    def search_six_digits(self, text: str) -> str:
+        """
+        Search first six digits in text.
+
+        :param text: str Text to search regex in.
+
+        :return: str Found six-digits string or '111111'.
+        """
+        match = re.search(r'(\d{6})', text)
+        if match:
+            return str(match.group(0))
+        return '111111'  # TODO decide what to do
+
+    def search_captcha_word(self, text: str) -> str:
+        """
+        Search 'CAPTCHA' and '... unavailable'.
+
+        :param text:
+        :return:
+        """
+        match = re.search('CAPTCHA', text)
+        second_match = re.search('CAPTCHA verification is currently unavailable', text)
+        if match and not second_match:
+            return 'CAPTCHA'
+        return ''
+
+    def search_email_word(self, text: str) -> str:
+        """
+        Search 'Email' word in text.
+
+        :param text: str Text from the clipboard.
+        :return: str 'email' word or empty string.
+        """
+        match = re.search('Email', text)
+        if match:
+            return 'Email'
+        return ''
 
 
-def search_email(text: str) -> str:
-    """
-    Search first email in text.
-
-    :param text: str Text to search regex in.
-
-    :return: str Found email or empty string.
-    """
-    match = re.search(r'[\w.+-]+@[\w-]+\.[\w.-]+', text)
-    if match:
-        email: str = str(match.group(0))
-        return check_email_is_verified(email)
-    return ''
+class AppSearchers(Searchers):
+    """App searchers for different cases."""
 
 
-def search_six_digits(text: str) -> str:
-    """
-    Search first six digits in text.
-
-    :param text: str Text to search regex in.
-
-    :return: str Found six-digits string or '111111'.
-    """
-    match = re.search(r'(\d{6})', text)
-    if match:
-        return str(match.group(0))
-    return '111111'
+app_searchers = AppSearchers()
