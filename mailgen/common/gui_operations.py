@@ -167,16 +167,27 @@ generator_operations = GeneratorOperations()
 class CaptchaVerifier(object):
     """Class with gui captcha verification functionality."""
 
-    def move_sample_to_place(self) -> bool:
+    def move_sample_to_place(self) -> None:
         """Move captcha sample to place."""
         coordinates: Optional[tuple] = self.get_sample_and_place_location()
-        if coordinates:
-            xx, yy, xxx, yyy = coordinates
-            pyautogui.moveTo(xx, yy)
-            time.sleep(2)
-            pyautogui.dragTo(xxx + 2, yyy - 3, 2, button='left')
-            return True
-        return False
+        if not coordinates:
+            abort(
+                ''.join(
+                    (
+                        "Account verification failed - haven'nt found CAPTCHA samples.",
+                        ' Try again',
+                    ),
+                ),
+            )
+        xx, yy, xxx, yyy = coordinates  # type: ignore
+        pyautogui.moveTo(xx, yy)
+        time.sleep(2)
+        pyautogui.dragTo(xxx + 2, yyy - 3, 2, button='left')
+        time.sleep(1)
+        pyautogui.typewrite('\n')
+        time.sleep(20)
+        if generator_operations.is_captcha_verification():
+            abort('CAPTCHA verification failed. Please, try again.')
 
     def get_sample_and_place_location(self) -> Optional[tuple[int, int, int, int]]:
         """Get captcha sample and place location."""
