@@ -7,7 +7,7 @@ from typing import Optional
 import pyautogui
 
 from mailgen.common.app_services import WindllService, app_searchers
-from mailgen.common.app_utilities import randomize
+from mailgen.common.app_utilities import abort, randomize
 from mailgen.common.constants import DROPMAIL_URL, GOOGLE_URL, PROTON_URL
 
 windll_service = WindllService()
@@ -33,7 +33,7 @@ class EmailVerifier(object):
             if box_object:
                 xx, yy = box_object
                 pyautogui.click(xx, yy)
-                time.sleep(1)
+                time.sleep(0.9)
                 new_mail = windll_service.get_clipboard_data(app_searchers.search_email)
                 if new_mail:
                     logger.info('10 min mail: {email}'.format(email=new_mail))
@@ -42,9 +42,7 @@ class EmailVerifier(object):
     def find_email_and_use_for_verification(self) -> None:  # noqa: WPS213
         """Find email with given service and use for verification."""
         pyautogui.typewrite('\t\t\t\n')
-
         pyautogui.hotkey('ctrl', 't')
-
         time.sleep(3)
         pyautogui.typewrite('{url}\n'.format(url=DROPMAIL_URL))
 
@@ -52,15 +50,24 @@ class EmailVerifier(object):
 
         pyautogui.hotkey('ctrl', '\t')
         time.sleep(1)
-
         pyautogui.hotkey('ctrl', 'v')
-
         pyautogui.typewrite('\n')
+
+    def is_email_correct(self) -> None:
+        """Check whether email accepted as available for verification."""
+        time.sleep(1)
+        pyautogui.click(x=0, y=300)
+        pyautogui.hotkey('ctrl', 'a')
+        time.sleep(0.9)
+        pyautogui.hotkey('ctrl', 'c')
+        time.sleep(2)
+        pyautogui.click(x=0, y=300)
+        if windll_service.get_clipboard_data(app_searchers.search_email_verif_phrase):
+            abort('Verification email was not accepted. Try again.')
 
     def copy_to_clipboard_dropmail_page(self) -> None:
         """Copy to clipboard 'dropmail.me' page."""
         time.sleep(25)
-
         pyautogui.hotkey('ctrl', '\t')
         time.sleep(5)
         pyautogui.typewrite('\t\t\t\t\t\t')
@@ -77,15 +84,16 @@ class EmailVerifier(object):
         six_digits: str = windll_service.get_clipboard_data(
             app_searchers.search_six_digits,
         )
-
+        if not six_digits:
+            abort("Digits haven't received to verification email. Try again.")
         pyautogui.typewrite('{digits}\n'.format(digits=six_digits))
-
         time.sleep(5)
         pyautogui.typewrite('\n')
 
     def verify_email(self) -> None:
         """Verify proton accaunt with email verification."""
         self.find_email_and_use_for_verification()
+        self.is_email_correct()
         self.copy_to_clipboard_dropmail_page()
         self.use_verification_digit_from_clipboard()
 
