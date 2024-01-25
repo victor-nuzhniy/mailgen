@@ -14,6 +14,7 @@ needed not like at other generators
 It is used to generate a protonmail mail for you which you can fully access
 
 ## HOW TO USE
+current_language: en
 os: windows
 install python: https://www.python.org/downloads/
 and don't forget to add python to your PATH
