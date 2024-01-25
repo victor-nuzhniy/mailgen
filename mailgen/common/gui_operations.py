@@ -9,6 +9,7 @@ import pyautogui
 from mailgen.common.app_services import WindllService, app_searchers
 from mailgen.common.app_utilities import abort, get_incognito_open_tab_letter, randomize
 from mailgen.common.constants import DROPMAIL_URL, GOOGLE_URL, PROTON_URL
+from mailgen.common.os_services import OsInfo
 
 windll_service = WindllService()
 logger: logging.Logger = logging.getLogger()
@@ -49,21 +50,21 @@ class EmailVerifier(object):
         self.check_email()
 
         pyautogui.hotkey('ctrl', '\t')
-        time.sleep(1)
+        time.sleep(0.3)
         pyautogui.hotkey('ctrl', 'v')
-        time.sleep(0.4)
+        time.sleep(2)
         pyautogui.typewrite('\n')
 
     def is_email_correct(self) -> None:
         """Check whether email accepted as available for verification."""
-        time.sleep(1)
-        pyautogui.click(x=0, y=300)
+        time.sleep(0.8)
+        pyautogui.click(x=0, y=120)
         pyautogui.hotkey('ctrl', 'a')
         time.sleep(0.9)
         pyautogui.hotkey('ctrl', 'c')
         time.sleep(2)
-        pyautogui.click(x=0, y=300)
-        if windll_service.get_clipboard_data(app_searchers.search_email_verif_phrase):
+        pyautogui.click(x=0, y=120)
+        if windll_service.get_clipboard_data(app_searchers.search_email_word):
             abort('Verification email was not accepted. Try again.')
 
     def copy_to_clipboard_dropmail_page(self) -> None:
@@ -74,7 +75,7 @@ class EmailVerifier(object):
         pyautogui.click(0, 300)
         time.sleep(0.3)
         pyautogui.hotkey('ctrl', 'a')
-        time.sleep(1)
+        time.sleep(0.8)
         pyautogui.hotkey('ctrl', 'c')
 
     def use_verification_digit_from_clipboard(self) -> None:  # noqa: WPS213
@@ -113,7 +114,8 @@ class GeneratorOperations(object):
 
         time.sleep(5)
         letter = get_incognito_open_tab_letter()
-        pyautogui.hotkey('ctrlleft', 'shift', letter)  # add logic default browser
+        pyautogui.hotkey('ctrlleft', 'shift', letter)
+        time.sleep(3)
         pyautogui.typewrite('{url}\n'.format(url=PROTON_URL))
         time.sleep(5)
 
@@ -138,31 +140,36 @@ class GeneratorOperations(object):
 
     def finish_registration(self) -> None:
         """Finish registration, refusing to use phone number as verification."""
+        os_info = OsInfo()
         time.sleep(15)
-        pyautogui.typewrite('\t\t\t\n')
-        time.sleep(1)
         pyautogui.typewrite('\t\n')
+        time.sleep(1)
+        if os_info.default_browser == 'firefox':
+            pyautogui.typewrite('\t\t\n')
+        else:
+            pyautogui.typewrite('\t\t\t\n')
 
     def is_captcha_verification(self) -> bool:
         """Check, whether captcha verification available."""
-        pyautogui.click(0, 300)
-        time.sleep(0.4)
+        pyautogui.click(x=1, y=120)
+        time.sleep(1)
         pyautogui.hotkey('ctrl', 'a')
-        time.sleep(0.3)
+        time.sleep(1)
         pyautogui.hotkey('ctrl', 'c')
         time.sleep(1)
-        pyautogui.click(x=0, y=300)
+        pyautogui.click(x=1, y=120)
         return bool(
             windll_service.get_clipboard_data(app_searchers.search_captcha_word),
         )
 
     def is_email_verification(self) -> bool:
         """Check, whether email verification available."""
+        time.sleep(1)
         pyautogui.hotkey('ctrl', 'a')
-        time.sleep(0.3)
+        time.sleep(1)
         pyautogui.hotkey('ctrl', 'c')
         time.sleep(1)
-        pyautogui.click(x=0, y=300)
+        pyautogui.click(x=1, y=120)
         return bool(windll_service.get_clipboard_data(app_searchers.search_email_word))
 
 
@@ -189,7 +196,7 @@ class CaptchaVerifier(object):
         time.sleep(2)
         pyautogui.dragTo(xxx + 2, yyy - 3, 2, button='left')
         time.sleep(2)
-        pyautogui.leftClick(0, 300)
+        pyautogui.leftClick(1, 300)
         time.sleep(0.3)
         pyautogui.press('enter')  # TODO check , add tabs
         time.sleep(20)
