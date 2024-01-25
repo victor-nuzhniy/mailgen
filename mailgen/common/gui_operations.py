@@ -77,12 +77,13 @@ class EmailVerifier(object):
         time.sleep(1)
         pyautogui.hotkey('ctrl', 'c')
 
-    def use_verification_digit_from_clipboard(self) -> None:
+    def use_verification_digit_from_clipboard(self) -> None:  # noqa: WPS213
         """Use previously saved to clipboard verification digits."""
         time.sleep(0.1)
         pyautogui.hotkey('shift', '\t')
         pyautogui.hotkey('ctrl', '\t')
         time.sleep(5)
+        pyautogui.typewrite('\t\t')
         six_digits: str = windll_service.get_clipboard_data(
             app_searchers.search_six_digits,
         )
