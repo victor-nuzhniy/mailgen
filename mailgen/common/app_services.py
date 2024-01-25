@@ -124,21 +124,9 @@ class Searchers(object):
         :param text: str Text from the clipboard.
         :return: str 'email' word or empty string.
         """
-        match = re.search('Email', text)
+        match = re.search('Email address', text)
         if match:
             return 'Email'
-        return ''
-
-    def search_email_verif_phrase(self, text: str) -> str:
-        """
-        Search 'Get verification code' phrase.
-
-        :param text: str Text from the clipboard.
-        :return: str 'Found' word or empty string.
-        """
-        match = re.search('Get verification code', text)
-        if match:
-            return 'Found'
         return ''
 
 
